@@ -1,0 +1,125 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Results (n_components=0.95)
+data = {
+    'Without PCA k-NN': {'Accuracy': 0.4642857142857143, 'Precision': 0.5458963557778354, 'Recall': 0.4642857142857143,
+                         'F1-Score': 0.4663579896814242},
+    'With PCA k-NN': {'Accuracy': 0.2857142857142857, 'Precision': 0.38906662145686444, 'Recall': 0.2857142857142857,
+                      'F1-Score': 0.29257081840065446},
+    'Without PCA Decision Tree': {'Accuracy': 0.6447368421052632, 'Precision': 0.6921499239385062,
+                                  'Recall': 0.6447368421052632, 'F1-Score': 0.654055950618567},
+    'With PCA Decision Tree': {'Accuracy': 0.32706766917293234, 'Precision': 0.3516785596827709,
+                               'Recall': 0.32706766917293234, 'F1-Score': 0.3282997784517404},
+    'Without PCA MLP': {'Accuracy': 0.7669172932330827, 'Precision': 0.7979986937165168, 'Recall': 0.7669172932330827,
+                        'F1-Score': 0.7687209582914412},
+    'With PCA MLP': {'Accuracy': 0.5657894736842105, 'Precision': 0.5840782140749551, 'Recall': 0.5657894736842105,
+                     'F1-Score': 0.5653087576666569},
+    'Without PCA SVM-linear': {'Accuracy': 0.8364661654135338, 'Precision': 0.8591501464189193,
+                               'Recall': 0.8364661654135338, 'F1-Score': 0.8408757490291476},
+    'With PCA SVM-linear': {'Accuracy': 0.45300751879699247, 'Precision': 0.4938342532477708,
+                            'Recall': 0.45300751879699247, 'F1-Score': 0.4577722227052456},
+    'Without PCA SVM-poly-3': {'Accuracy': 0.41353383458646614, 'Precision': 0.8914143304137884,
+                               'Recall': 0.41353383458646614, 'F1-Score': 0.4439356942458944},
+    'With PCA SVM-poly-3': {'Accuracy': 0.3082706766917293, 'Precision': 0.6127622024648017,
+                            'Recall': 0.3082706766917293, 'F1-Score': 0.3213022453915103},
+    'Without PCA SVM-poly-5': {'Accuracy': 0.22180451127819548, 'Precision': 0.9220793964016156,
+                               'Recall': 0.22180451127819548, 'F1-Score': 0.2626143271723238},
+    'With PCA SVM-poly-5': {'Accuracy': 0.24812030075187969, 'Precision': 0.6922336533681072,
+                            'Recall': 0.24812030075187969, 'F1-Score': 0.2707469924797785},
+    'Without PCA SVM-poly-7': {'Accuracy': 0.12969924812030076, 'Precision': 0.9346954807060295,
+                               'Recall': 0.12969924812030076, 'F1-Score': 0.16454662926632974},
+    'With PCA SVM-poly-7': {'Accuracy': 0.22180451127819548, 'Precision': 0.7461481868832481,
+                            'Recall': 0.22180451127819548, 'F1-Score': 0.2485640530691427},
+    'Without PCA Random Forest': {'Accuracy': 0.9285714285714286, 'Precision': 0.9366316997083397,
+                                  'Recall': 0.9285714285714286, 'F1-Score': 0.9286578661823951},
+    'With PCA Random Forest': {'Accuracy': 0.5225563909774437, 'Precision': 0.5671926957404292,
+                               'Recall': 0.5225563909774437, 'F1-Score': 0.5175340210584624},
+    'Without PCA AdaBoost': {'Accuracy': 0.07518796992481203, 'Precision': 0.8061103749801194,
+                             'Recall': 0.07518796992481203, 'F1-Score': 0.040995072091637025},
+    'With PCA AdaBoost': {'Accuracy': 0.08270676691729323, 'Precision': 0.8902004379323002,
+                          'Recall': 0.08270676691729323, 'F1-Score': 0.04746640934140453},
+    'Without PCA Bagging': {'Accuracy': 0.8120300751879699, 'Precision': 0.8417508448284223,
+                            'Recall': 0.8120300751879699, 'F1-Score': 0.8171375404183326},
+    'With PCA Bagging': {'Accuracy': 0.4567669172932331, 'Precision': 0.5018488563331758, 'Recall': 0.4567669172932331,
+                         'F1-Score': 0.4583386432983478},
+    'Without PCA Extra Trees': {'Accuracy': 0.8966165413533834, 'Precision': 0.907047485031185,
+                                'Recall': 0.8966165413533834, 'F1-Score': 0.8966055081617536},
+    'With PCA Extra Trees': {'Accuracy': 0.5545112781954887, 'Precision': 0.5966940732968211,
+                             'Recall': 0.5545112781954887, 'F1-Score': 0.5553069542170371},
+    'Without PCA Gradient Boosting': {'Accuracy': 0.6428571428571429, 'Precision': 0.7227548046792995,
+                                      'Recall': 0.6428571428571429, 'F1-Score': 0.6567015896954052},
+    'With PCA Gradient Boosting': {'Accuracy': 0.3458646616541353, 'Precision': 0.4267493904293347,
+                                   'Recall': 0.3458646616541353, 'F1-Score': 0.35186840046138673}
+}
+
+data_non_ensamble_95 = {
+    'k-NN': {'Accuracy': 0.4642857142857143, 'Precision': 0.5458963557778354, 'Recall': 0.4642857142857143,
+             'F1-Score': 0.4663579896814242},
+    'PCA k-NN': {'Accuracy': 0.2857142857142857, 'Precision': 0.38906662145686444, 'Recall': 0.2857142857142857,
+                 'F1-Score': 0.29257081840065446},
+    'Decision Tree': {'Accuracy': 0.6447368421052632, 'Precision': 0.6921499239385062,
+                      'Recall': 0.6447368421052632, 'F1-Score': 0.654055950618567},
+    'PCA Decision Tree': {'Accuracy': 0.32706766917293234, 'Precision': 0.3516785596827709,
+                          'Recall': 0.32706766917293234, 'F1-Score': 0.3282997784517404},
+    'MLP': {'Accuracy': 0.7669172932330827, 'Precision': 0.7979986937165168, 'Recall': 0.7669172932330827,
+            'F1-Score': 0.7687209582914412},
+    'PCA MLP': {'Accuracy': 0.5657894736842105, 'Precision': 0.5840782140749551, 'Recall': 0.5657894736842105,
+                'F1-Score': 0.5653087576666569},
+    'SVM-linear': {'Accuracy': 0.8364661654135338, 'Precision': 0.8591501464189193,
+                   'Recall': 0.8364661654135338, 'F1-Score': 0.8408757490291476},
+    'PCA SVM-linear': {'Accuracy': 0.45300751879699247, 'Precision': 0.4938342532477708,
+                       'Recall': 0.45300751879699247, 'F1-Score': 0.4577722227052456},
+    'SVM-poly-3': {'Accuracy': 0.41353383458646614, 'Precision': 0.8914143304137884,
+                   'Recall': 0.41353383458646614, 'F1-Score': 0.4439356942458944},
+    'PCA SVM-poly-3': {'Accuracy': 0.3082706766917293, 'Precision': 0.6127622024648017,
+                       'Recall': 0.3082706766917293, 'F1-Score': 0.3213022453915103},
+    'SVM-poly-5': {'Accuracy': 0.22180451127819548, 'Precision': 0.9220793964016156,
+                   'Recall': 0.22180451127819548, 'F1-Score': 0.2626143271723238},
+    'PCA SVM-poly-5': {'Accuracy': 0.24812030075187969, 'Precision': 0.6922336533681072,
+                       'Recall': 0.24812030075187969, 'F1-Score': 0.2707469924797785},
+    'SVM-poly-7': {'Accuracy': 0.12969924812030076, 'Precision': 0.9346954807060295,
+                   'Recall': 0.12969924812030076, 'F1-Score': 0.16454662926632974},
+    'PCA SVM-poly-7': {'Accuracy': 0.22180451127819548, 'Precision': 0.7461481868832481,
+                       'Recall': 0.22180451127819548, 'F1-Score': 0.2485640530691427}}
+
+data_ensamble_95 = {'Without PCA Random Forest': {'Accuracy': 0.9285714285714286, 'Precision': 0.9366316997083397,
+                                                  'Recall': 0.9285714285714286, 'F1-Score': 0.9286578661823951},
+                    'With PCA Random Forest': {'Accuracy': 0.5225563909774437, 'Precision': 0.5671926957404292,
+                                               'Recall': 0.5225563909774437, 'F1-Score': 0.5175340210584624},
+                    'Without PCA AdaBoost': {'Accuracy': 0.07518796992481203, 'Precision': 0.8061103749801194,
+                                             'Recall': 0.07518796992481203, 'F1-Score': 0.040995072091637025},
+                    'With PCA AdaBoost': {'Accuracy': 0.08270676691729323, 'Precision': 0.8902004379323002,
+                                          'Recall': 0.08270676691729323, 'F1-Score': 0.04746640934140453},
+                    'Without PCA Bagging': {'Accuracy': 0.8120300751879699, 'Precision': 0.8417508448284223,
+                                            'Recall': 0.8120300751879699, 'F1-Score': 0.8171375404183326},
+                    'With PCA Bagging': {'Accuracy': 0.4567669172932331, 'Precision': 0.5018488563331758,
+                                         'Recall': 0.4567669172932331, 'F1-Score': 0.4583386432983478},
+                    'Without PCA Extra Trees': {'Accuracy': 0.8966165413533834, 'Precision': 0.907047485031185,
+                                                'Recall': 0.8966165413533834, 'F1-Score': 0.8966055081617536},
+                    'With PCA Extra Trees': {'Accuracy': 0.5545112781954887, 'Precision': 0.5966940732968211,
+                                             'Recall': 0.5545112781954887, 'F1-Score': 0.5553069542170371},
+                    'Without PCA Gradient Boosting': {'Accuracy': 0.6428571428571429, 'Precision': 0.7227548046792995,
+                                                      'Recall': 0.6428571428571429, 'F1-Score': 0.6567015896954052},
+                    'With PCA Gradient Boosting': {'Accuracy': 0.3458646616541353, 'Precision': 0.4267493904293347,
+                                                   'Recall': 0.3458646616541353, 'F1-Score': 0.35186840046138673}}
+
+df = pd.DataFrame(data_ensamble_95).T
+df["Model"] = df.index
+
+
+# df = df.sort_values(by='Model')
+
+metrics = ['F1-Score', 'Recall', 'Precision', 'Accuracy']
+
+# Plotting
+fig, ax = plt.subplots(figsize=(10, 15))
+df.set_index('Model')[metrics].plot(kind='barh', ax=ax)
+plt.title('Impact of PCA on Ensemble Models (n_components=0.95)')
+plt.xlabel('Score')
+plt.ylabel('Models')
+plt.grid()
+# plt.tight_layout()
+legend = plt.legend(title="Metrics", loc='upper right', bbox_to_anchor=(1, 1), fontsize=12)
+legend.get_title().set_fontsize(14)
+plt.show()
