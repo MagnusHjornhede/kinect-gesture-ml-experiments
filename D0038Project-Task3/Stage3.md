@@ -1,6 +1,6 @@
 # Stage 3 - Ensemble Models and PCA
 
-by Magnus Hjörnhede
+by Magnus H
 
 ---
 
